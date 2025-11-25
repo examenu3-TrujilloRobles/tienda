@@ -1,0 +1,51 @@
+{% extends 'tienda/base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Registrar Nueva Venta{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="text-primary-emphasis">
+                <i class="fas fa-file-invoice-dollar me-2"></i> Registrar Nueva Venta
+            </h2>
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Volver al Dashboard
+            </a>
+        </div>
+        <hr>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- Cliente -->
+            <div class="mb-3">
+                {{ form.cliente|as_crispy_field }}
+            </div>
+
+            <!-- Detalles de venta (productos y cantidades) -->
+            {{ detalle_formset.management_form }}
+            {% for detalle_form in detalle_formset %}
+                <div class="row mb-3">
+                    <div class="col">
+                        {{ detalle_form.producto|as_crispy_field }}
+                    </div>
+                    <div class="col">
+                        {{ detalle_form.cantidad|as_crispy_field }}
+                    </div>
+                </div>
+            {% endfor %}
+
+            <!-- Botones al final -->
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-danger">
+                    <i class="fas fa-times me-1"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-check-circle me-1"></i> Registrar Venta
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

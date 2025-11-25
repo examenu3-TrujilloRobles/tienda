@@ -1,0 +1,111 @@
+{% extends 'tienda/base.html' %} 
+{% load static %}
+
+{% block title %}Reporte de Ventas{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-chart-line me-2"></i> Reporte de Ventas</h2>
+        <a href="{% url 'registrar_venta' %}" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i> Registrar Venta
+        </a>
+    </div>
+
+    <!-- FILTRO DE FECHA -->
+    <div class="card shadow mb-4">
+    <div class="card-body">
+        <h6 class="card-title">
+            <form method="GET" class="d-flex align-items-center">
+                <label for="fecha_inicio" class="me-2"><i class="fas fa-calendar-alt me-1"></i> Filtrar por fecha:</label>
+                    <input type="date" id="fecha_inicio" name="fecha_inicio" class="form-control me-2" value="{{ fecha_inicio|default:today_date }}">
+                <button type="submit" class="btn btn-success">Aplicar</button>
+            </form>
+        </h6>
+    </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-md-4 mb-3">
+            <div class="card text-white bg-success shadow">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Total Vendido</h6>
+                        <h3 class="card-text">${{ total_vendido|floatformat:2 }}</h3> 
+                    </div>
+                    <i class="fas fa-dollar-sign fa-2x"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card text-white bg-info shadow">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Número de Ventas</h6>
+                        <h3 class="card-text">{{ numero_ventas }}</h3> 
+                    </div>
+                    <i class="fas fa-shopping-cart fa-2x"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card text-white bg-warning shadow">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Promedio por Venta</h6>
+                        <h3 class="card-text">${{ promedio_venta|floatformat:2 }}</h3>
+                    </div>
+                    <i class="fas fa-calculator fa-2x"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <h3><i class="fas fa-list-alt me-2"></i> Detalle de Ventas</h3>
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Fecha y Hora</th>
+                    <th>Producto</th>
+                    <th>Cliente</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unit.</th>
+                    <th>Total</th>
+                    <th>Vendedor</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for detalle in detalles_ventas %}
+                <tr>
+                    <td>#{{ forloop.counter }}</td> 
+                    <td>{{ detalle.venta.fecha_venta|date:"j M Y H:i" }}</td>
+                    <td>{{ detalle.producto.nombre }}</td>
+                    <td>{{ detalle.venta.cliente.nombre }}</td>
+                    <td>{{ detalle.cantidad }}</td>
+                    <td>${{ detalle.precio_unitario|floatformat:2 }}</td>
+                    <td>${{ detalle.subtotal|floatformat:2 }}</td> 
+                    <td>{{ detalle.venta.vendido_por.username }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center text-muted py-4">
+                        No se registraron ventas para la fecha seleccionada.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="6" class="text-end fw-bold">TOTAL VENDIDO:</td>
+                    <td colspan="2" class="fw-bold fs-5 text-success">${{ total_vendido|floatformat:2 }}</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+</div>
+{% endblock %}
